@@ -81,8 +81,8 @@ public class AutomobilController : ControllerBase
         }
     }
 
-    [HttpGet("FiltrirajAutomobile/{Pkm}/{BrS}/{CenaV}/{ModelV}")]
-    public async Task<ActionResult> FiltrirajAutomobile(uint Pkm,uint BrS,uint CenaV,string ModelV)
+    [HttpGet("FiltrirajAutomobile")]
+    public async Task<ActionResult> FiltrirajAutomobile(uint? Pkm,uint? BrS,uint? CenaV,string? ModelV)
     {
         try
         {

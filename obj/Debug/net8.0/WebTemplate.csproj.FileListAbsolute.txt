@@ -140,3 +140,4 @@ C:\Users\Admin\Desktop\WebD\Januar-2025\obj\Debug\net8.0\refint\WebTemplate.dll
 C:\Users\Admin\Desktop\WebD\Januar-2025\obj\Debug\net8.0\WebTemplate.pdb
 C:\Users\Admin\Desktop\WebD\Januar-2025\obj\Debug\net8.0\WebTemplate.genruntimeconfig.cache
 C:\Users\Admin\Desktop\WebD\Januar-2025\obj\Debug\net8.0\ref\WebTemplate.dll
+C:\Users\Admin\Desktop\WebD\Januar-2025\obj\Debug\net8.0\WebTemplate.sourcelink.json
