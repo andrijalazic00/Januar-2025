@@ -1,6 +1,10 @@
+using System.Collections.Immutable;
 using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebTemplate.Controllers;
 
@@ -59,7 +63,7 @@ public class AutomobilController : ControllerBase
                 s.Kilometraza,
                 s.Sedista,
                 s.CenaPoDanu,
-                i = Context.iznajmljeni!.Where(p => p.IznajmljenAutomobil!.ID == s.ID).Select( s => new
+                iznamjmljen = Context.iznajmljeni!.Where(p => p.IznajmljenAutomobil!.ID == s.ID).Select( s => new
                 {
                     s.ID,
                     i = Context.korisnici!.Where(k => k.ID == s.KorisnikIznajmljuje!.ID).Select( s => new
@@ -85,11 +89,40 @@ public class AutomobilController : ControllerBase
     public async Task<ActionResult> FiltrirajAutomobile(uint? Pkm,uint? BrS,uint? CenaV,string? ModelV)
     {
         try
-        {
-            var autos = await Context.automobili.Where(p => p.Kilometraza == Pkm || p.Sedista == BrS || p.CenaPoDanu == CenaV || p.Model == ModelV).ToListAsync();
-            if(autos == null) return BadRequest("Nema takvog automobila!");
-
-            return Ok(autos);
+        {   
+            var autos = new List<Automobil>();
+            if( Pkm != null) autos = await Context.automobili.Where(p => p.Kilometraza == Pkm).ToListAsync();
+            if(BrS != null)
+            {
+            if( !autos.IsNullOrEmpty() )
+              autos = autos.Where(p => p.Sedista == BrS).ToList();
+              else
+              autos = await Context.automobili.Where(p => p.Sedista == BrS).ToListAsync();
+            }
+            if(CenaV != null)
+            {
+            if(!autos.IsNullOrEmpty())
+             autos = autos.Where(p => p.CenaPoDanu == CenaV).ToList(); 
+             else
+             autos = await Context.automobili.Where(p => p.CenaPoDanu == CenaV).ToListAsync();
+            }
+            if(ModelV != null)
+            {
+            if(!autos.IsNullOrEmpty())
+            autos = autos.Where(p => p.Model == ModelV).ToList();
+            else
+            autos = await Context.automobili.Where(p => p.Model == ModelV).ToListAsync();
+            }
+            if (autos.IsNullOrEmpty()) return BadRequest("Automobil ne postoji");
+            var auto = autos.Select( s => new
+            {
+                s.Model,
+                s.Kilometraza,
+                s.Sedista,
+                s.Godiste,
+                iznajmljen =  Context.iznajmljeni.Where( p => p.IznajmljenAutomobil!.ID == s.ID).IsNullOrEmpty()? "nije iznajmljen":"iznajmljen"
+            }).ToList();
+            return Ok(auto);
         }
         catch(Exception e)
         {
