@@ -89,7 +89,23 @@ public class AutomobilController : ControllerBase
     public async Task<ActionResult> FiltrirajAutomobile(uint? Pkm,uint? BrS,uint? CenaV,string? ModelV)
     {
         try
-        {   
+        {
+            if( Pkm == null && BrS== null && CenaV == null && ModelV == null)
+            {
+               var autos = await Context.automobili.Select(s => new
+            {
+                s.ID,
+                s.Model,
+                s.Kilometraza,
+                s.Sedista,
+                s.CenaPoDanu,
+                Iznajmljen = Context.iznajmljeni.Where( p => p.IznajmljenAutomobil!.ID == s.ID).IsNullOrEmpty()? "nije iznajmljen":"iznajmljen"
+            }).ToListAsync();
+              if( autos == null) return BadRequest("Prodavnica nema automobile");
+              return Ok(autos);
+            }
+            else
+            {  
             var autos = new List<Automobil>();
             if( Pkm != null) autos = await Context.automobili.Where(p => p.Kilometraza == Pkm).ToListAsync();
             if(BrS != null)
@@ -124,6 +140,7 @@ public class AutomobilController : ControllerBase
                 iznajmljen =  Context.iznajmljeni.Where( p => p.IznajmljenAutomobil!.ID == s.ID).IsNullOrEmpty()? "nije iznajmljen":"iznajmljen"
             }).ToList();
             return Ok(auto);
+            }
         }
         catch(Exception e)
         {
