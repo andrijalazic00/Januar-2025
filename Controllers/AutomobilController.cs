@@ -120,6 +120,7 @@ public class AutomobilController : ControllerBase
                 s.Kilometraza,
                 s.Sedista,
                 s.Godiste,
+                s.CenaPoDanu,
                 iznajmljen =  Context.iznajmljeni.Where( p => p.IznajmljenAutomobil!.ID == s.ID).IsNullOrEmpty()? "nije iznajmljen":"iznajmljen"
             }).ToList();
             return Ok(auto);
